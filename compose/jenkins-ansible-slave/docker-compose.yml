@@ -1,0 +1,9 @@
+# Replaces the default Jenkins slave
+jenkins-slave:
+  image: bzon/adop-jenkins-slave:ansible-2.1
+  environment:
+    SLAVE_EXECUTORS: "10"
+    SLAVE_NAME: "Swarm_Ansible_Slave"
+    SLAVE_LABELS: "aws ldap java8 docker ansible"
+    LDAP_DOMAIN: "${LDAP_DOMAIN}"
+    SWARM_PASSWORD: "${PASSWORD_JENKINS}"

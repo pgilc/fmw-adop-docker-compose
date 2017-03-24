@@ -1,0 +1,33 @@
+language: bash
+
+sudo: required
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_COMPOSE_VERSION=1.6.0
+    - INITIAL_ADMIN_USER=admin.user
+    - INITIAL_ADMIN_PASSWORD_PLAIN=admin123
+    - COMPOSE_FILES="-f site/docker-compose.yml"
+    - JEKYLL_SOURCE="/site"
+
+before_install:
+ - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+ - chmod +x docker-compose
+ - sudo mv docker-compose /usr/local/bin
+
+script:
+ - ./adop
+ - ./adop compose init
+ - ./adop target set -t http://127.0.0.1 -u ${INITIAL_ADMIN_USER} -p ${INITIAL_ADMIN_PASSWORD_PLAIN}
+ - sleep 30
+ - ./adop workspace -w Travis create
+ - ./adop project -p TestProject -w Travis create
+ - ./adop compose down
+ - docker-compose ${COMPOSE_FILES} build
+ - docker-compose ${COMPOSE_FILES} -p adopdockercompose up -d
+ - count=0; until docker logs adopdockercompose_site_1 | grep "Server running..." &> /dev/null || (( count++ > 12 )); do echo "Waiting $count"; sleep 5; done
+ - docker logs adopdockercompose_site_1 
+ - docker logs adopdockercompose_site_1 | grep "Server running..." &> /dev/null
+ - curl -sL -w "%{http_code}\\n" "http://localhost/adop-docker-compose/" -o /dev/null | grep "200" &> /dev/null

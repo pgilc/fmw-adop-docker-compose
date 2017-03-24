@@ -1,0 +1,97 @@
+# set LOGSTASH_HOST to dns/ip of logstash host
+
+proxy:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "proxy"
+
+ldap:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "ldap"
+
+sensu-uchiwa:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-uchiwa"
+
+sensu-api:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-api"
+
+sensu-server:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-server"
+
+sensu-client:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-client"
+
+sensu-rabbitmq:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-rabbitmq"
+
+sensu-redis:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sensu-redis"
+
+sonar-mysql:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sonar-mysql"
+
+sonar:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "sonar"
+
+jenkins:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "jenkins"
+    
+jenkins-slave:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "jenkins-slave"
+
+selenium-hub:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "selenium-hub"
+
+selenium-node-chrome:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "selenium-node-chrome"
+
+selenium-node-firefox:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "selenium-node-firefox"
+
+nexus:
+  log_driver: "syslog"
+  log_opt:
+    syslog-address: "udp://${LOGSTASH_HOST}:25826"
+    syslog-tag: "nexus"

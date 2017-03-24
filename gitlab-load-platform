@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+MAX_RETRY=30
+TARGET_HOST=${TARGET_HOST:-localhost}
+
+if [[ -z ${ADOP_CLI_USER} ]] || [[ -z ${ADOP_CLI_PASSWORD} ]]; then
+  echo "ADOP_CLI_USER or ADOP_CLI_PASSWORD is not defined."
+  echo "Please run ./adop target -h to set this up."
+  exit 0
+fi
+
+retry_handler() {
+if [[ $MAX_RETRY -lt $COUNT ]]; then
+  echo "Max retries limit has been reached.. Exiting script."
+  exit 0
+else
+  echo "$1"
+fi
+}
+
+# Wait for Jenkins to be up and running
+# -------------------------------------------------------------------------------------
+COUNT=1
+until [[ $(curl -I -s ${ADOP_CLI_USER}:${ADOP_CLI_PASSWORD}@${TARGET_HOST}/jenkins/|head -n 1|cut -d$' ' -f2) == 200 ]] || [[ $MAX_RETRY -lt $COUNT ]]
+do
+  echo "Jenkins unavailable, sleeping for 5s"
+  sleep 5
+  ((COUNT ++))
+done
+retry_handler "Jenkins instance is up and running man!"
+
+# Wait for Gitlab to be up and running
+# -------------------------------------------------------------------------------------       
+COUNT=1
+until [[ $(curl -I -s ${ADOP_CLI_USER}:${ADOP_CLI_PASSWORD}@${TARGET_HOST}/gitlab/users/sign_in|head -n 1|cut -d$' ' -f2) == 200 ]] || [[ $MAX_RETRY -lt $COUNT ]]
+do
+  echo "Gitlab unavailable, sleeping for 5s"
+  sleep 5 
+  ((COUNT ++))
+done
+retry_handler "Gitlab instance is up and running man!"
+
+# Fix for known ssh problems of Jenkins to Gitlab container connection - Disable session pam_login 
+# https://github.com/gitlabhq/gitlabhq/issues/6537 
+# http://www.linuxweblog.com/blogs/sandip/20090203/setloginuid-failed-opening-loginuid 
+# -------------------------------------------------------------------------------------
+docker exec gitlab sed -i "s/session    required     pam_loginuid.so/session    optional     pam_loginuid.so/" /etc/pam.d/sshd
+
+# Load Gitlab Platform - Create Generate Workspace job
+# -------------------------------------------------------------------------------------
+JOB_URL=${TARGET_HOST}/jenkins/job/Gitlab_Load_Platform
+curl -s -X POST "${ADOP_CLI_USER}:${ADOP_CLI_PASSWORD}@${JOB_URL}/buildWithParameters?delay=0sec"
+
+# Wait for Generate Workspace job to appear
+# -------------------------------------------------------------------------------------
+JOB_URL=${TARGET_HOST}/jenkins/job/Workspace_Management/job/Generate_Workspace
+COUNT=1
+until [[ $(curl -I -s ${ADOP_CLI_USER}:${ADOP_CLI_PASSWORD}@${JOB_URL}/api/json|head -n 1|cut -d$' ' -f2) == 200 ]] || [[ $MAX_RETRY -lt $COUNT ]]
+do
+  echo "Waiting for Generate workspace job to be ready, sleeping for 5s"
+  sleep 5
+  ((COUNT ++))
+done
+retry_handler "Generate Workspace job is ready!"
