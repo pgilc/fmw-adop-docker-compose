@@ -40,27 +40,6 @@ ldap:
     SLAPD_DOMAIN: ${LDAP_DOMAIN}
     SLAPD_FULL_DOMAIN: ${LDAP_FULL_DOMAIN}
 
-  container_name: sonar
-  restart: always
-  image: accenture/adop-sonar:0.2.0
-  #build: ../images/docker-sonar/
-  net: ${CUSTOM_NETWORK_NAME}
-  expose:
-    - "9000"
-  environment:
-    - "dependency:container==sonar-mysql"
-    - "LDAP_URL=ldap://ldap:389"
-    - "LDAP_BIND_DN=cn=admin,${LDAP_FULL_DOMAIN}"
-    - "LDAP_BIND_PASSWORD=${LDAP_PWD}"
-    - "LDAP_USER_BASE_DN=ou=people,${LDAP_FULL_DOMAIN}"
-    - "LDAP_USER_REQUEST=(&(objectClass=inetOrgPerson)(uid={login}))"
-    - "LDAP_USER_REAL_NAME_ATTRIBUTE=displayName"
-    - "LDAP_USER_EMAIL_ATTRIBUTE=mail"
-    - "LDAP_GROUP_BASE_DN=ou=groups,${LDAP_FULL_DOMAIN}"
-    - "LDAP_GROUP_REQUEST=(&(objectClass=groupOfUniqueNames)(uniqueMember={dn}))"
-    - "LDAP_GROUP_ID_ATTRIBUTE=cn"
-    - "SONARQUBE_JDBC_URL=jdbc:mysql://sonar-mysql:3306/${SONAR_MYSQL_DATABASE}?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true"
-
 jenkins:
   container_name: jenkins
   restart: always
@@ -129,23 +108,6 @@ jenkins-slave:
     SLAVE_EXECUTORS: ${SLAVE_EXECUTORS}
     INITIAL_ADMIN_USER: ${INITIAL_ADMIN_USER}
     INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD_PLAIN}
-
-  container_name: nexus
-  restart: always
-  image:  accenture/adop-nexus:0.1.0
-  net: ${CUSTOM_NETWORK_NAME}
-  expose:
-    - "8081"
-  environment:
-    NEXUS_BASE_URL: "${PROTO}://${TARGET_HOST}/nexus"
-    LDAP_SEARCH_BASE: "${LDAP_FULL_DOMAIN}"
-    LDAP_ENABLED: "true"
-    LDAP_URL: "ldap"
-    LDAP_BIND_DN: "cn=admin,${LDAP_FULL_DOMAIN}"
-    LDAP_USER_PASSWORD_ATTRIBUTE: "userPassword"
-    LDAP_USER_BASE_DN: "ou=people"
-    LDAP_GROUP_BASE_DN: "ou=groups"
-    LDAP_BIND_PASSWORD: ${LDAP_PWD}
 
 ldap-ltb:
   container_name: ldap-ltb
