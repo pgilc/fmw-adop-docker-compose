@@ -60,3 +60,4 @@ gitlab:
           block_auto_created_users: false
           base: '${LDAP_FULL_DOMAIN}'
       EOS
+
