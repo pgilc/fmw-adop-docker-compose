@@ -2,7 +2,7 @@ jenkins:
   image: accenturepdc/adop-jenkins:2-0.1.1
   environment:
     ADOP_GERRIT_ENABLED: "false"
-    ADOP_GITLAB_ENABLED: "false"
+    ADOP_GITLAB_ENABLED: "true"
     GIT_REPO: "gitlab"
     GITLAB_FRONT_END_URL: "http://gitlab/gitlab"
     GITLAB_JENKINS_USERNAME: "jenkins"
@@ -10,7 +10,7 @@ jenkins:
     GITLAB_ROOT_PASSWORD: ${PASSWORD_GITLAB}
 
 proxy:
-  image: pgilc/fmw-nginx:0.1.0
+  image: accenturepdc/adop-nginx:0.1.0
   environment:
     GIT_REPO: "gitlab"
 
@@ -19,6 +19,7 @@ jenkins-slave:
     PASSWORD_GITLAB: "${PASSWORD_GITLAB}"
     PUBLIC_IP: "${PUBLIC_IP}"
 
+gitlab:
   container_name: gitlab
   restart: always
   image: gitlab/gitlab-ce:8.15.4-ce.1
