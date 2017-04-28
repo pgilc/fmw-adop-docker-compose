@@ -10,7 +10,7 @@ jenkins:
     GITLAB_ROOT_PASSWORD: ${PASSWORD_GITLAB}
 
 proxy:
-  image: accenturepdc/adop-nginx:0.1.0
+  image: pgilc/fmw-nginx:0.1.0
   environment:
     GIT_REPO: "gitlab"
 
