@@ -5,7 +5,7 @@
 export ADOP_SMTP_ENABLED="true"
 
 # LDAP
-
+export LDAP_ADMIN="admin"
 export LDAP_DOMAIN="ldap.adop.com"
 export LDAP_FULL_DOMAIN="dc=ldap,dc=adop,dc=com"
 

@@ -25,12 +25,12 @@ ldap:
   container_name: ldap
   restart: always
   #build: ../images/docker-ldap/
-  image: accenture/adop-ldap:0.1.2
+  image: accenture/adop-ldap:0.2.0
   net: ${CUSTOM_NETWORK_NAME}
   expose:
     - "389"
   ports:
-    - "389:389"
+    - "389/tcp:389/tcp"
   environment:
     INITIAL_ADMIN_USER: ${INITIAL_ADMIN_USER}
     INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
@@ -39,6 +39,8 @@ ldap:
     SLAPD_PASSWORD: ${LDAP_PWD}
     SLAPD_DOMAIN: ${LDAP_DOMAIN}
     SLAPD_FULL_DOMAIN: ${LDAP_FULL_DOMAIN}
+    SLAPD_ADDITIONAL_MODULES: "ppolicy"
+    SLAPD_ADDITIONAL_SCHEMAS: "ppolicy"
 
 jenkins:
   container_name: jenkins
@@ -112,13 +114,13 @@ jenkins-slave:
 ldap-ltb:
   container_name: ldap-ltb
   restart: always
-  image: accenture/adop-ldap-ltb:0.1.0
+  image: accenture/adop-ldap-ltb:0.2.0
   net: ${CUSTOM_NETWORK_NAME}
   expose:
     - "80"
   environment:
     LDAP_LTB_URL: "ldap://ldap:389"
-    LDAP_LTB_DN: "cn=admin,${LDAP_FULL_DOMAIN}"
+    LDAP_LTB_DN: "${LDAP_ADMIN},${LDAP_FULL_DOMAIN}"
     LDAP_LTB_PWD: "${LDAP_PWD}"
     LDAP_LTB_BS: "${LDAP_FULL_DOMAIN}"
 
